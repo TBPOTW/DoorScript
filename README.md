@@ -54,7 +54,7 @@ private void Update()
   {
     if (hit.collider.tag == "door") { // Если этим объектом окажется дверь
       if (Input.GetKeyDown(KeyCode.E)) // Если в этот момент игрок нажмет 'E' на клавиатуре
-				hit.collider.transform.GetComponent<Door>().setState(); // Меняем состояния двери
+	hit.collider.transform.GetComponent<Door>().setState(); // Меняем состояния двери
     }
   }
 }
