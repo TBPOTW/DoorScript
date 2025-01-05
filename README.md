@@ -18,9 +18,46 @@
 10. Настройте их также как в пункте **7**
 # КАК ЭТО РАБОТАЕТ?
 ## КАКИЕ ЕСТЬ ПЕРЕМЕННЫЕ И ЗА ЧТО ОНИ ОТВЕЧАЮТ?
-`isOpen` отвечает за состояние двери: открыта или закрыта в данный момент
-`isLocked` отвечает за состояние двери: заперта ли дверь в данный момент
+1. `isOpen` отвечает за состояние двери: открыта или закрыта в данный момент
+2. `isLocked` отвечает за состояние двери: заперта ли дверь в данный момент
 ## КАК ИСПОЛЬЗОВАТЬ РАБОТАЕТ СМЕНА СОСТОЯНИ?
-
-
+``` C#
+public void setState()
+{
+  if (!isLocked) // Если возможно открыть дверь
+  {
+    isOpen = !isOpen; // Меняем состояние на противоположное
+    anim.SetBool("isOpen", isOpen); // Проигрываем нужную анимацию
+    transform.GetComponent<BoxCollider>().enabled = false; // отключаем BoxCollider, чтобы дверь не двигала игрока
+    Invoke("SetBox", 0.27f); // Возвращаем BoxCollider спустя 0.27 секунд
+    if (isOpen) // Проигрываем звук открывания
+      playSound(sounds[0], volume: 0.7f, p1: 1f, p2: 1.25f);
+    else // Проигрываем звук закрывания
+      playSound(sounds[1], volume: 0.7f, p1: 1f, p2: 1.25f);
+  } 
+  // Если дверь открыть нельзя
+  else
+    Debug.Log("It is locked!"); 
+}
+```
+## КАК ОТКРЫВАТЬ И ЗАКРЫВАТЬ ДВЕРЬ ЧЕРЕЗ ДРУГИЕ СКРИПТЫ?
+Покажу на примере скрипта игрока используя _RayCast_
+```
+private void Update()
+{
+  // Создаем RayCast и пускаем его из центра камеры
+  RaycastHit hit; 
+  Ray ray = Camera.main.ScreenPointToRay(new Vector2(Screen.width / 2, Screen.height / 2));
+  if (Physics.Raycast(ray, out hit, 2f)) // Если луч столкнется с чем-либо на расстоянии 2
+  {
+    if (hit.collider.tag == "door") { // Если этим объектом окажется дверь
+      if (Input.GetKeyDown(KeyCode.E)) // Если в этот момент игрок нажмет 'E' на клавиатуре
+				hit.collider.transform.GetComponent<Door>().setState(); // Меняем состояния двери
+    }
+  }
+}
+```
+Благодаря `GetComponent<Door>().setState();` можно обратится к компоненту Door и вызвать функцию setState().
+### ВАЖНО
+Если `setState()` окажется типа private, то обратится к ней из **других** скриптов вы не сможете. Она обязательно должна быть типа `public`.
 
