@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class Door : SoundManager
+public class Door : MonoBehaviour
 {
     private Animator anim;
-    public bool isOpen;
+    public bool isOpen; 
     public bool isHasSomeSounds;
     public bool isLocked;
     private void Start()
@@ -16,24 +14,24 @@ public class Door : SoundManager
 
     public void setState()
     {
-        if (!isLocked)
+        if (!isLocked) // Если возможно открыть дверь
         {
-            isOpen = !isOpen;
-            anim.SetBool("isOpen", isOpen);
-            transform.GetComponent<BoxCollider>().enabled = false;
-            Invoke("SetBox", 0.27f);
-            if (isHasSomeSounds)
-            {
-                if (isOpen) playSound(sounds[0], volume: 0.7f, p1: 1f, p2: 1.25f);
-                else playSound(sounds[1], volume: 0.7f, p1: 1f, p2: 1.25f);
-            }
-            else playSound(sounds[0], volume: 0.7f, p1: 1f, p2: 1.25f);
-        }
+            isOpen = !isOpen; // Меняем состояние на противоположное
+            anim.SetBool("isOpen", isOpen); // Проигрываем нужную анимацию
+            transform.GetComponent<BoxCollider>().enabled = false; // отключаем BoxCollider, чтобы дверь не двигала игрока
+            Invoke("SetBox", 0.27f); // Возвращаем BoxCollider спустя 0.27 секунд
+            if (isOpen) // Проигрываем звук открывания
+                playSound(sounds[0], volume: 0.7f, p1: 1f, p2: 1.25f);
+            else // Проигрываем звук закрывания
+                playSound(sounds[1], volume: 0.7f, p1: 1f, p2: 1.25f);
+        } 
+        // Если дверь открыть нельзя
         else
         {
-            PlayerInteract.Instance.messageText.text = "I cant open this";
+            Debug.Log("It is locked!");
         }
     }
+    // Функция, которая возвращает BoxCollider
     void SetBox()
     {
         transform.GetComponent<BoxCollider>().enabled = true;
